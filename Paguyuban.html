@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paguyuban Anggota</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    background: url('Foto.jpg.jpg') no-repeat center center fixed;
+    background-size: cover;
+  }
+  .container {
+    max-width: 500px;
+    margin: 50px auto;
+    background: rgba(255,255,255,0.95);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  input, button, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  button {
+    background: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  button:hover { background: #0056b3; }
+  .error { color: red; margin: 10px 0; }
+  .hidden { display: none; }
+  ul { text-align: left; padding-left: 20px; }
+  img { max-width: 100%; border-radius: 5px; margin: 10px 0; }
+  .admin-btn { background: #28a745; margin-top: 5px; }
+</style>
+</head>
+<body>
+
+<div class="container" id="loginDiv">
+  <h2>Login Anggota</h2>
+  <input type="text" id="username" placeholder="Username">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <p id="error" class="error"></p>
+</div>
+
+<div class="container hidden" id="homeDiv">
+  <h2>Selamat Datang Anggota Paguyuban</h2>
+  <p>Hanya anggota yang bisa melihat halaman ini.</p>
+
+  <h3>Jadwal Kegiatan:</h3>
+  <ul id="jadwalList">
+    <li>Arisan Bulanan: 15 September 2025</li>
+    <li>Rapat Korwil: 20 September 2025</li>
+  </ul>
+  <button class="admin-btn" onclick="editJadwal()">Edit Jadwal (Admin)</button>
+
+  <h3>Foto Kegiatan:</h3>
+  <img id="fotoKegiatan" src="https://via.placeholder.com/300x200" alt="Kegiatan">
+  <button class="admin-btn" onclick="editFoto()">Ganti Foto (Admin)</button>
+
+  <button onclick="logout()">Logout</button>
+</div>
+
+<script>
+const anggota = [
+  {username: "anggota1", password: "1234", admin:true},
+  {username: "anggota2", password: "1234", admin:false}
+];
+
+function login() {
+  const user = document.getElementById("username").value;
+  const pass = document.getElementById("password").value;
+  const match = anggota.find(a => a.username === user && a.password === pass);
+  if(match) {
+    document.getElementById("loginDiv").classList.add("hidden");
+    document.getElementById("homeDiv").classList.remove("hidden");
+    // Sembunyikan tombol admin jika bukan admin
+    if(!match.admin){
+      document.querySelectorAll('.admin-btn').forEach(b => b.style.display='none');
+    }
+  } else {
+    document.getElementById("error").innerText = "Username atau password salah!";
+  }
+}
+
+function logout() {
+  document.getElementById("homeDiv").classList.add("hidden");
+  document.getElementById("loginDiv").classList.remove("hidden");
+  document.getElementById("username").value = "";
+  document.getElementById("password").value = "";
+  document.getElementById("error").innerText = "";
+}
+
+function editJadwal() {
+  const newJadwal = prompt("Masukkan jadwal baru (pisahkan tiap jadwal dengan koma):");
+  if(newJadwal) {
+    const jadwalArray = newJadwal.split(',').map(j => j.trim());
+    const ul = document.getElementById("jadwalList");
+    ul.innerHTML = "";
+    jadwalArray.forEach(j => {
+      const li = document.createElement("li");
+      li.textContent = j;
+      ul.appendChild(li);
+    });
+  }
+}
+
+function editFoto() {
+  const newFoto = prompt("Masukkan URL foto baru:");
+  if(newFoto) {
+    document.getElementById("fotoKegiatan").src = newFoto;
+  }
+}
+</script>
+
+</body>
+</html>
